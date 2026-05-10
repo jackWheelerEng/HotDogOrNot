@@ -1,49 +1,67 @@
-"""Preprocessing: load → resize → HSV / grayscale.
-
-Pipeline coverage:
-    Input image → Resize image → Convert to HSV and grayscale
-"""
+"""Preprocessing: load, resize, BGR / grayscale / HSV / RGB."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
-import numpy as np
-
 from .config import IMAGE_SIZE
 
 
-def load_image(path: str | Path) -> np.ndarray:
-    """Load an image from disk as an RGB ``uint8`` array.
+def load_image_bgr(path: str | Path) -> np.ndarray:
+    """Load an image from disk as a BGR ``uint8`` array (same as course notebooks)."""
+    import cv2
 
-    OpenCV reads as BGR by default; this function returns RGB so downstream
-    code (matplotlib, scikit-image) sees what humans expect.
-    """
-    raise NotImplementedError
+    p = str(path)
+    # HW1/HW2 — cv2.imread (BGR)
+    data = cv2.imread(p, cv2.IMREAD_COLOR)
+    if data is None:
+        raise FileNotFoundError(f"Could not read image: {p}")
+    return data
+
+
+def load_image(path: str | Path) -> np.ndarray:
+    """Load an image as RGB ``uint8`` for matplotlib / ``original_rgb`` callers."""
+    import cv2
+
+    # Not HW — BGR2RGB for matplotlib
+    return cv2.cvtColor(load_image_bgr(path), cv2.COLOR_BGR2RGB)
+
+
+def resize_image_bgr(
+    image_bgr: np.ndarray,
+    size: tuple[int, int] = IMAGE_SIZE,
+) -> np.ndarray:
+    """Resize a BGR image. ``size`` is ``(width, height)``."""
+    import cv2
+
+    w, h = size
+    # Demo3_PixelBasics.ipynb — cv2.resize
+    return cv2.resize(image_bgr, (w, h), interpolation=cv2.INTER_AREA)
 
 
 def resize_image(
     image_rgb: np.ndarray,
     size: tuple[int, int] = IMAGE_SIZE,
 ) -> np.ndarray:
-    """Resize an RGB image to the canonical pipeline size."""
-    raise NotImplementedError
+    """Resize an RGB image. ``size`` is ``(width, height)``."""
+    import cv2
 
-
-def to_hsv(image_rgb: np.ndarray) -> np.ndarray:
-    """Convert an RGB image to HSV color space."""
-    raise NotImplementedError
-
-
-def to_grayscale(image_rgb: np.ndarray) -> np.ndarray:
-    """Convert an RGB image to single-channel grayscale."""
-    raise NotImplementedError
+    w, h = size
+    # Demo3_PixelBasics.ipynb — cv2.resize
+    return cv2.resize(image_rgb, (w, h), interpolation=cv2.INTER_AREA)
 
 
 def preprocess(path: str | Path) -> dict[str, np.ndarray]:
-    """Run load → resize → HSV/grayscale and return all three views.
+    """Run load → resize on BGR, then grayscale and HSV like HW1/HW2.
 
-    Returns a dict with keys ``rgb``, ``hsv``, ``gray`` so feature modules can
-    pick whichever representation they need without re-converting.
+    Returns keys ``bgr``, ``rgb``, ``hsv``, ``gray``.
     """
-    raise NotImplementedError
+    import cv2
+
+    bgr = resize_image_bgr(load_image_bgr(path))
+    # HW1/HW2 — BGR2GRAY
+    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+    # Not HW — BGR2HSV (for HSV histogram)
+    hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
+    rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+    return {"bgr": bgr, "rgb": rgb, "hsv": hsv, "gray": gray}

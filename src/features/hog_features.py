@@ -1,8 +1,4 @@
-"""Histogram of Oriented Gradients (HOG) feature.
-
-Pipeline coverage:
-    Extract HOG features (captures the elongated cylindrical bun shape).
-"""
+"""HOG feature (not HW)."""
 
 from __future__ import annotations
 
@@ -25,9 +21,20 @@ def hog_features(
     block_norm: str = HOG_BLOCK_NORM,
     return_visualization: bool = False,
 ) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
-    """Compute a HOG descriptor for a grayscale image.
+    """Compute a HOG descriptor for a grayscale image."""
+    # Not HW — HOG
+    from skimage.feature import hog
 
-    When ``return_visualization`` is True, also returns a HOG visualization
-    image (used by ``visualize.py`` to show the gradient orientations).
-    """
-    raise NotImplementedError
+    out = hog(
+        image_gray,
+        orientations=orientations,
+        pixels_per_cell=pixels_per_cell,
+        cells_per_block=cells_per_block,
+        block_norm=block_norm,
+        feature_vector=True,
+        visualize=return_visualization,
+    )
+    if return_visualization:
+        feat, viz = out
+        return feat.astype(np.float32), viz
+    return out.astype(np.float32)

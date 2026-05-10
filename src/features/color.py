@@ -1,9 +1,4 @@
-"""Color histogram feature.
-
-Pipeline coverage:
-    Extract color histogram (computed over HSV — sausages and buns sit in a
-    pretty narrow hue/saturation band, which is the whole point).
-"""
+"""HSV color histogram (cv2.calcHist; not from HW notebooks)."""
 
 from __future__ import annotations
 
@@ -16,17 +11,17 @@ def color_histogram(
     image_hsv: np.ndarray,
     bins: tuple[int, int, int] = COLOR_HIST_BINS,
 ) -> np.ndarray:
-    """Compute a flattened, L1-normalized 3D HSV histogram.
+    """Compute a flattened, L1-normalized 3D HSV histogram."""
+    import cv2
 
-    Parameters
-    ----------
-    image_hsv:
-        ``(H, W, 3)`` uint8 image in HSV color space.
-    bins:
-        Number of histogram bins per (H, S, V) channel.
-
-    Returns
-    -------
-    1D ``float32`` feature vector of length ``prod(bins)``.
-    """
-    raise NotImplementedError
+    h_b, s_b, v_b = bins
+    # Not HW — HSV histogram (calcHist)
+    hist = cv2.calcHist(
+        [image_hsv],
+        [0, 1, 2],
+        None,
+        [h_b, s_b, v_b],
+        [0, 180, 0, 256, 0, 256],
+    )
+    hist = cv2.normalize(hist, hist).flatten()
+    return hist.astype(np.float32)
