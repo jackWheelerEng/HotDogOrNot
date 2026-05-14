@@ -15,12 +15,8 @@ from ..config import INCLUDE_HOUGH, INCLUDE_SALIENCY
 
 @dataclass
 class FeatureBundle:
-    """Per-image features kept around so we can both classify and visualize.
+    """Per-image features: ``vector`` for the classifier; other fields are intermediates."""
 
-    ``vector`` is what feeds the Random Forest; the rest are intermediate
-    artifacts for ``visualize.py``. Primary edge map ``edges`` stays the Canny
-    result for quick viewing; Laplacian maps are separate fields.
-    """
 
     vector: np.ndarray
     color_hist: np.ndarray

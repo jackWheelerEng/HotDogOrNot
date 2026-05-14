@@ -20,10 +20,10 @@ def load_image_bgr(path: str | Path) -> np.ndarray:
 
 
 def load_image(path: str | Path) -> np.ndarray:
-    """Load an image as RGB ``uint8`` for matplotlib / ``original_rgb`` callers."""
+    """Load an image as RGB ``uint8``."""
     import cv2
 
-    # Not HW — BGR2RGB for matplotlib
+    # Not HW — BGR2RGB (e.g. saliency API expects RGB)
     return cv2.cvtColor(load_image_bgr(path), cv2.COLOR_BGR2RGB)
 
 
