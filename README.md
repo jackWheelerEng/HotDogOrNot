@@ -1,8 +1,6 @@
 # HotDogOrNot
 
-A classical computer-vision take on the *Silicon Valley* "SeeFood" gag: given an
-image, decide whether it contains a hot dog or not. No deep learning required —
-the goal is to lean on hand-crafted image features and a Random Forest.
+A project inspired by the *Silicon Valley* "SeeFood" bit: given an image, decide whether it shows a hot dog or not. It uses classical computer-vision features and a Random Forest classifier. 
 
 ## Pipeline
 
@@ -13,19 +11,18 @@ Resize image
    ↓
 Convert to HSV and grayscale
    ↓
-Extract color histogram          ─┐
+Color histogram                  ─┐
 Extract HOG features              ├─→  Combine into one feature vector
-Run Canny edge detection          │
-Calculate edge density            │
-Find largest contour + shape ratio┘
+Edge detection                    │
+Hough line transform              │
+Saliency                          │
+Shape (solidity and extent)       ┘
    ↓
 Train Random Forest classifier
    ↓
 Predict hot dog / not hot dog
 ```
 
-Each step lives in its own module under `src/` so you can iterate on one piece
-at a time (e.g. swap Canny for Laplacian, add saliency, try a Hough transform).
 
 ## Project layout
 
@@ -35,52 +32,43 @@ HotDogOrNot/
 ├── requirements.txt
 ├── data/
 │   └── raw/
-│       ├── hotdog/         # put hot dog images here
-│       └── not_hotdog/     # put non-hot-dog images here
-├── models/                 # trained classifier artifacts (.joblib)
+│       ├── hotdog/         # labeled hot dog images
+│       └── not_hotdog/     # labeled non-hot-dog images
+├── models/                 # trained classifier (.joblib)
 ├── scripts/
-│   ├── train.py            # train + persist Random Forest
-│   └── predict.py          # classify a single image; print label to terminal
+│   ├── train.py            # optional feature prompts; persists the model
+│   └── predict.py          # classify one image; print label & confidence
 └── src/
-    ├── config.py           # shared constants (image size, HOG params, ...)
-    ├── feature_prompt.py   # interactive feature toggles (train / predict)
-    ├── feature_toggles.py  # which feature blocks are enabled
-    ├── preprocessing.py    # resize / HSV / grayscale
-    ├── features/
-    │   ├── color.py        # HSV color histogram
-    │   ├── hog_features.py # HOG descriptor
-    │   ├── edges.py        # Canny + edge density
-    │   ├── shape.py        # largest contour + shape ratio
-    │   └── combined.py     # concatenate everything into one vector
-    ├── pipeline.py         # end-to-end feature extraction for one image
-    └── model.py            # Random Forest train / save / load / predict
+    ├── config.py
+    ├── feature_prompt.py   # CLI prompts for enabling / disabling feature blocks
+    ├── feature_toggles.py
+    ├── preprocessing.py
+    ├── pipeline.py         # feature extraction entry point
+    ├── model.py            # dataset build, RF train / save / load / predict
+    └── features/
+        ├── color.py
+        ├── hog_features.py
+        ├── edges.py        
+        ├── shape.py
+        ├── hough_lines.py
+        ├── saliency.py
+        └── combined.py     # stack enabled blocks into one vector
 ```
 
 ## Setup
 
+Create Virtual Environment
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Usage (planned)
-
+Activate the Project
 ```bash
-# 1. drop images into data/raw/hotdog/ and data/raw/not_hotdog/
-# 2. train the classifier
 python scripts/train.py
-
-# 3. classify a new image (prints label and confidence)
-python scripts/predict.py path/to/image.jpg
+#Alternativly, use the default setting to use all features
+python scripts/train.py --defaults 
 ```
 
-## Possible extensions
-
-These are intentionally left out of the core pipeline but slot in cleanly:
-
-- Saliency map (`cv2.saliency`) as an extra feature channel or visualization.
-- Hough transforms for cylindrical-bun detection.
-- FFT / DCT frequency features.
-- Laplacian-of-Gaussian as an alternative to Canny.
-- Simple segmentation mask (GrabCut, Otsu on saturation) to gate other features.
+**Dependencies:** NumPy, OpenCV (contrib build for optional saliency API), scikit-image (HOG), scikit-learn (Random Forest), joblib (model persistence).
