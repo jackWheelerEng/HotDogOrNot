@@ -9,10 +9,4 @@ venv/
 .idea/
 .vscode/
 
-data/raw/**/*.jpg
-data/raw/**/*.jpeg
-data/raw/**/*.png
-data/raw/**/*.bmp
-data/raw/**/*.gif
-data/raw/**/*.webp
 models/*.joblib
