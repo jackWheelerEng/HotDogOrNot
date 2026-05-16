@@ -1,8 +1,4 @@
-"""Random Forest classifier — train, save, load, predict.
-
-Pipeline coverage:
-    Train random forest classifier → Predict hot dog / not hot dog.
-"""
+#Section is AI Generated to help bridge my skills for machine learning
 
 from __future__ import annotations
 
@@ -23,6 +19,7 @@ from .config import (
     RF_N_ESTIMATORS,
     RF_RANDOM_STATE,
 )
+from .feature_toggles import FeatureToggles
 
 _IMAGE_SUFFIXES: frozenset[str] = frozenset(
     {".jpg", ".jpeg", ".png", ".bmp", ".webp", ".tif", ".tiff"}
@@ -48,11 +45,16 @@ class TrainResult:
     test_accuracy: float
     n_train: int
     n_test: int
+    #: Out-of-bag accuracy (each tree evaluated on samples not in its bootstrap bag).
+    #: Usually below train accuracy; better than train acc for comparing feature sets.
+    oob_accuracy: float | None = None
 
 
 def build_dataset(
     hotdog_dir: Path,
     not_hotdog_dir: Path,
+    *,
+    toggles: FeatureToggles | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Walk the labeled image directories and build ``(X, y)``.
 
@@ -72,7 +74,7 @@ def build_dataset(
     rows: list[np.ndarray] = []
     labels: list[int] = []
     for path, label in paths_labels:
-        bundle = pipeline.extract_features(path)
+        bundle = pipeline.extract_features(path, toggles=toggles)
         rows.append(bundle.vector)
         labels.append(label)
 
@@ -102,14 +104,21 @@ def train(
         max_depth=RF_MAX_DEPTH,
         random_state=RF_RANDOM_STATE,
         n_jobs=-1,
+        oob_score=True,
+        bootstrap=True,
     )
     clf.fit(X_train, y_train)
+    raw_oob = getattr(clf, "oob_score_", None)
+    oob: float | None = None
+    if raw_oob is not None and np.isfinite(raw_oob):
+        oob = float(raw_oob)
     return TrainResult(
         classifier=clf,
         train_accuracy=float(clf.score(X_train, y_train)),
         test_accuracy=float(clf.score(X_test, y_test)),
         n_train=int(X_train.shape[0]),
         n_test=int(X_test.shape[0]),
+        oob_accuracy=oob,
     )
 
 

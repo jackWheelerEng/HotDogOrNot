@@ -1,4 +1,4 @@
-"""Probabilistic Hough line stats on a binary edge map."""
+#Section mainly uses HW and demo code,  expiremented with houghLinesP
 
 from __future__ import annotations
 
@@ -14,18 +14,8 @@ def hough_line_features(
     min_line_length: int = 20,
     max_line_gap: int = 10,
 ) -> np.ndarray:
-    """Scalars summarizing detected line segments.
-
-    Returns ``float32`` vector:
-        [log1p(n_lines), mean_length, std_length, max_length]
-
-    All zeros when no lines are found.
-    """
     import cv2
 
-    if edges_binary.ndim != 2:
-        raise ValueError("edges_binary must be single-channel")
-    # OpenCV — HoughLinesP (not in the listed demos)
     lines = cv2.HoughLinesP(
         edges_binary,
         rho,

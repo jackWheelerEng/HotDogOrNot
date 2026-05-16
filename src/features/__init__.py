@@ -1,1 +1,1 @@
-"""Feature extractors for the HotDogOrNot pipeline."""
+#Empty as a package marker

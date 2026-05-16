@@ -1,25 +1,11 @@
-"""Shape features from the largest contour.
-
-Pipeline coverage:
-    Find largest contour and shape ratio.
-
-Hot dogs are roughly cylindrical — their bounding boxes have a strong
-aspect ratio. Extent (contour area / bbox area) and solidity (contour area /
-convex hull area) also help separate elongated foods from round ones.
-"""
-
+#Section is new content that was not in the demos but learned from the internet
 from __future__ import annotations
 
 import numpy as np
 
 
 def largest_contour(edges: np.ndarray) -> np.ndarray | None:
-    """Return the largest external contour in an edge / binary mask."""
     import cv2
-
-    if edges.ndim != 2:
-        raise ValueError("edges must be single-channel")
-    # demo10_testContour.py — cv2.findContours (RETR_EXTERNAL for largest blob)
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not contours:
         return None
@@ -30,7 +16,6 @@ def shape_features(
     contour: np.ndarray | None,
     image_shape: tuple[int, int],
 ) -> np.ndarray:
-    """Shape descriptors: ``[aspect_ratio, extent, solidity, normalized_area]``."""
     import cv2
 
     h, w = image_shape[0], image_shape[1]
@@ -55,6 +40,5 @@ def shape_pipeline(
     edges: np.ndarray,
     image_shape: tuple[int, int],
 ) -> tuple[np.ndarray | None, np.ndarray]:
-    """Return ``(largest_contour, shape_feature_vector)``."""
     cnt = largest_contour(edges)
     return cnt, shape_features(cnt, image_shape)

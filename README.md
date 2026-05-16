@@ -2,8 +2,7 @@
 
 A classical computer-vision take on the *Silicon Valley* "SeeFood" gag: given an
 image, decide whether it contains a hot dog or not. No deep learning required —
-the goal is to lean on hand-crafted image features and a Random Forest, and to
-*show the work* with intermediate visualizations.
+the goal is to lean on hand-crafted image features and a Random Forest.
 
 ## Pipeline
 
@@ -23,8 +22,6 @@ Find largest contour + shape ratio┘
 Train Random Forest classifier
    ↓
 Predict hot dog / not hot dog
-   ↓
-Show image-processing evidence
 ```
 
 Each step lives in its own module under `src/` so you can iterate on one piece
@@ -37,17 +34,17 @@ HotDogOrNot/
 ├── README.md
 ├── requirements.txt
 ├── data/
-│   ├── raw/
-│   │   ├── hotdog/         # put hot dog images here
-│   │   └── not_hotdog/     # put non-hot-dog images here
-│   └── processed/          # cached feature vectors (optional)
+│   └── raw/
+│       ├── hotdog/         # put hot dog images here
+│       └── not_hotdog/     # put non-hot-dog images here
 ├── models/                 # trained classifier artifacts (.joblib)
-├── outputs/                # saved evidence figures
 ├── scripts/
 │   ├── train.py            # train + persist Random Forest
-│   └── predict.py          # classify a single image + show evidence
+│   └── predict.py          # classify a single image; print label to terminal
 └── src/
     ├── config.py           # shared constants (image size, HOG params, ...)
+    ├── feature_prompt.py   # interactive feature toggles (train / predict)
+    ├── feature_toggles.py  # which feature blocks are enabled
     ├── preprocessing.py    # resize / HSV / grayscale
     ├── features/
     │   ├── color.py        # HSV color histogram
@@ -56,8 +53,7 @@ HotDogOrNot/
     │   ├── shape.py        # largest contour + shape ratio
     │   └── combined.py     # concatenate everything into one vector
     ├── pipeline.py         # end-to-end feature extraction for one image
-    ├── model.py            # Random Forest train / save / load / predict
-    └── visualize.py        # render image-processing evidence
+    └── model.py            # Random Forest train / save / load / predict
 ```
 
 ## Setup
@@ -75,7 +71,7 @@ pip install -r requirements.txt
 # 2. train the classifier
 python scripts/train.py
 
-# 3. classify a new image and see the evidence
+# 3. classify a new image (prints label and confidence)
 python scripts/predict.py path/to/image.jpg
 ```
 

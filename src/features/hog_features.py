@@ -1,4 +1,4 @@
-"""HOG feature (not HW)."""
+#Section is built with the suggestion of AI 
 
 from __future__ import annotations
 
@@ -19,10 +19,7 @@ def hog_features(
     pixels_per_cell: tuple[int, int] = HOG_PIXELS_PER_CELL,
     cells_per_block: tuple[int, int] = HOG_CELLS_PER_BLOCK,
     block_norm: str = HOG_BLOCK_NORM,
-    return_visualization: bool = False,
-) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
-    """Compute a HOG descriptor for a grayscale image."""
-    # Not HW — HOG
+) -> np.ndarray:
     from skimage.feature import hog
 
     out = hog(
@@ -32,9 +29,6 @@ def hog_features(
         cells_per_block=cells_per_block,
         block_norm=block_norm,
         feature_vector=True,
-        visualize=return_visualization,
+        visualize=False,
     )
-    if return_visualization:
-        feat, viz = out
-        return feat.astype(np.float32), viz
     return out.astype(np.float32)

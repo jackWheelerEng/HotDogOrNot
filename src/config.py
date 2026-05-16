@@ -1,9 +1,4 @@
-"""Shared configuration constants for the HotDogOrNot pipeline.
-
-Keeping these in one place makes it easy to tune the pipeline without hunting
-through individual feature modules.
-"""
-
+#Section of project parameters, mainly AI generated 
 from __future__ import annotations
 
 from pathlib import Path
@@ -11,9 +6,7 @@ from pathlib import Path
 PROJECT_ROOT: Path = Path(__file__).resolve().parents[1]
 DATA_DIR: Path = PROJECT_ROOT / "data"
 RAW_DIR: Path = DATA_DIR / "raw"
-PROCESSED_DIR: Path = DATA_DIR / "processed"
 MODELS_DIR: Path = PROJECT_ROOT / "models"
-OUTPUTS_DIR: Path = PROJECT_ROOT / "outputs"
 
 HOTDOG_DIR: Path = RAW_DIR / "hotdog"
 NOT_HOTDOG_DIR: Path = RAW_DIR / "not_hotdog"
@@ -47,15 +40,6 @@ LAPLACIAN_EDGE_PERCENTILE: float = 92.0
 
 # Which binarized edge map feeds contour finding + Hough (``"canny"`` or ``"laplacian"``).
 SHAPE_EDGE_SOURCE: str = "canny"
-
-# Toggle blocks in the stacked edge vector (see ``edges.py``).
-INCLUDE_EDGE_CANNY: bool = True
-INCLUDE_EDGE_LAPLACIAN: bool = True
-INCLUDE_EDGE_SOBEL: bool = True
-
-# Extra features concatenated after color / HOG / edges / shape (see ``pipeline.py``).
-INCLUDE_HOUGH: bool = True
-INCLUDE_SALIENCY: bool = True
 
 # Random Forest hyperparameters.
 RF_N_ESTIMATORS: int = 300

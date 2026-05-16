@@ -1,4 +1,4 @@
-"""Preprocessing: load, resize, BGR / grayscale / HSV / RGB."""
+#Section mainly uses HW code with some extra OpenCV functions 
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from .config import IMAGE_SIZE
 
 
 def load_image_bgr(path: str | Path) -> np.ndarray:
-    """Load an image from disk as a BGR ``uint8`` array (same as course notebooks)."""
+    """Load an image from disk as a BGR ``uint8`` array."""
     import cv2
 
     p = str(path)
@@ -17,14 +17,6 @@ def load_image_bgr(path: str | Path) -> np.ndarray:
     if data is None:
         raise FileNotFoundError(f"Could not read image: {p}")
     return data
-
-
-def load_image(path: str | Path) -> np.ndarray:
-    """Load an image as RGB ``uint8``."""
-    import cv2
-
-    # Not HW — BGR2RGB (e.g. saliency API expects RGB)
-    return cv2.cvtColor(load_image_bgr(path), cv2.COLOR_BGR2RGB)
 
 
 def resize_image_bgr(
@@ -37,18 +29,6 @@ def resize_image_bgr(
     w, h = size
     # Demo3_PixelBasics.ipynb — cv2.resize
     return cv2.resize(image_bgr, (w, h), interpolation=cv2.INTER_AREA)
-
-
-def resize_image(
-    image_rgb: np.ndarray,
-    size: tuple[int, int] = IMAGE_SIZE,
-) -> np.ndarray:
-    """Resize an RGB image. ``size`` is ``(width, height)``."""
-    import cv2
-
-    w, h = size
-    # Demo3_PixelBasics.ipynb — cv2.resize
-    return cv2.resize(image_rgb, (w, h), interpolation=cv2.INTER_AREA)
 
 
 def preprocess(path: str | Path) -> dict[str, np.ndarray]:

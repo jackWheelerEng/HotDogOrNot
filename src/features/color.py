@@ -1,5 +1,3 @@
-"""HSV color histogram (cv2.calcHist; not from HW notebooks)."""
-
 from __future__ import annotations
 
 import numpy as np
@@ -11,11 +9,10 @@ def color_histogram(
     image_hsv: np.ndarray,
     bins: tuple[int, int, int] = COLOR_HIST_BINS,
 ) -> np.ndarray:
-    """Compute a flattened, L1-normalized 3D HSV histogram."""
     import cv2
 
     h_b, s_b, v_b = bins
-    # Not HW — HSV histogram (calcHist)
+    # New technique from machine learning (AI suggested)
     hist = cv2.calcHist(
         [image_hsv],
         [0, 1, 2],

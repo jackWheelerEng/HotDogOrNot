@@ -15,8 +15,4 @@ data/raw/**/*.png
 data/raw/**/*.bmp
 data/raw/**/*.gif
 data/raw/**/*.webp
-data/processed/*
-!data/processed/.gitkeep
 models/*.joblib
-outputs/*.png
-outputs/*.jpg
